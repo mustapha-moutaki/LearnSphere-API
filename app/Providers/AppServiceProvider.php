@@ -6,12 +6,12 @@ use Illuminate\Support\ServiceProvider;
 use App\Repositories\CategoryRepository;
 use App\Repositories\Interfaces\CategoryRepositoryInterface;
 
-
 /**
-*@OA\Info(
-*title="E-Learning",
-*version="1.0.0"
-*)*/
+* @OA\Info(
+* title="E-Learning",
+* version="1.0.0"
+* )
+*/
 
 class AppServiceProvider extends ServiceProvider{
     /**
