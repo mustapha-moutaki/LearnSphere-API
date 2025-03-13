@@ -4,7 +4,8 @@ namespace App\Repositories;
 
 use App\Models\Tag;
 use App\Repositories\Interfaces\TagRepositoryInterface;
-class TagRepository implements TagRepositoryInterface
+
+class TagRepository
 {
     public function getAllTags()
     {

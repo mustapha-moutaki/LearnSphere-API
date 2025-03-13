@@ -14,3 +14,4 @@ Route::resource('courses', CourseController::class);
 
 
 Route::apiResource('tags', TagController::class);
+
