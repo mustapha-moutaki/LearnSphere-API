@@ -108,7 +108,6 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['message' => 'Invalid refresh token'], 401);
         }
-
         // Delete all old tokens
         $user->tokens()->delete();
 
