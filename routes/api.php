@@ -25,3 +25,4 @@ Route::middleware(['auth:sanctum'])->prefix('V2')->group(function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
 });
+Route::post('/refresh', [AuthController::class, 'refreshToken']);
