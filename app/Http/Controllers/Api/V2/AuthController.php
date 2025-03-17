@@ -25,7 +25,7 @@ class AuthController extends Controller
             ], 401);
         }
 
-        // ✅ تصحيح المشكلة هنا
+       
         $token = $user->createToken($user->name, ['*'])->plainTextToken;
 
         return response()->json([
@@ -49,7 +49,7 @@ class AuthController extends Controller
         ]);
 
         if($user){
-            // ✅ تصحيح المشكلة هنا
+           
             $token = $user->createToken($user->name, ['*'])->plainTextToken;
 
             return response()->json([
@@ -61,6 +61,20 @@ class AuthController extends Controller
             return response()->json([
                 'message'=>'something went wrong',
             ], 500);
+        }
+    }
+
+
+    public function profile(Request $request){
+        if($request->user()){
+            return response()->json([
+                'message' =>'profile fiched',
+                'data' =>$request->user()
+            ], 200);
+        }else{
+            return response()->json([
+                'message' =>'Not Authentificated',
+            ], 401);
         }
     }
 }
