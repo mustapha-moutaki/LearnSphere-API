@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\api\V2\AuthController;
-
+use App\Http\Controllers\Api\V2\EnrollmentController;
 // API Routes for categories
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('subcategories', SubcategoryController::class);
@@ -27,7 +27,10 @@ Route::middleware(['auth:sanctum'])->prefix('V2')->group(function(){
 });
 Route::post('/refresh', [AuthController::class, 'refreshToken']);
 
-
+Route::post('/enrollments', [EnrollmentController::class, 'enroll']);
+Route::get('/enrollments', [EnrollmentController::class, 'index']);
+Route::get('/enrollments/user/{id}', [EnrollmentController::class, 'userEnrollments']);
+Route::delete('/enrollments/{id}', [EnrollmentController::class, 'unenroll']);
 
 /* 
 uisng middelarwe ->check admin role to access to logout and profile
