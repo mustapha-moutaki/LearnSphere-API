@@ -26,3 +26,23 @@ Route::middleware(['auth:sanctum'])->prefix('V2')->group(function(){
     Route::get('/profile', [AuthController::class, 'profile']);
 });
 Route::post('/refresh', [AuthController::class, 'refreshToken']);
+
+
+
+/* 
+uisng middelarwe ->check admin role to access to logout and profile
+
+Route::middleware(['auth:sanctum', 'role:admin'])->prefix('V2')->group(function () {
+    return response()->json(['message' => 'Welcome Admin']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+}); */
+
+// ---------for testing ---------
+// Route::middleware(['role:admin'])->get('/admin', function () {
+//     return response()->json(['message' => 'Welcome Admin']);
+// });
+
+// Route::middleware(['role:admin,student'])->get('/dashboard', function () {
+//     return response()->json(['message' => 'Welcome Admin or student']);
+// });
