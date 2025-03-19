@@ -48,6 +48,7 @@ Route::get('/statistics', [StatisticsController::class, 'getStatistics']);
 Route::get('/roles', [RolesController::class, 'index']);
 
 /* 
+
 ---------------------------------------------------------------------
 uisng middelarwe ->check admin role to access to logout and profile  \
 ---------------------------------------------------------------------
