@@ -113,10 +113,9 @@ class AuthController extends Controller
         // Delete all old tokens
         $user->tokens()->delete();
 
-        // Create a new access token (valid for 15 minutes)
+      
         $accessToken = $user->createToken('access_token', ['*'], now()->addMinutes(1))->plainTextToken;
 
-        // Create a new refresh token (valid for 7 days)
         $refreshToken = $user->createToken('refresh_token', ['refresh'], now()->addDays(7))->plainTextToken;
 
         return response()->json([
