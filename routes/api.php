@@ -27,6 +27,7 @@ Route::prefix('V2')->group(function () {
 Route::middleware(['auth:sanctum'])->prefix('V2')->group(function(){
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::post('/profile', [AuthController::class, 'updateProfile']);
 });
 
 //generate refresh token
@@ -39,7 +40,7 @@ Route::get('/enrollments/user/{id}', [EnrollmentController::class, 'userEnrollme
 Route::delete('/enrollments/{id}', [EnrollmentController::class, 'unenroll']);
 
 //edit profile and update the image
-Route::post('/update-profile', [AuthController::class, 'updateProfile'])->middleware('auth:sanctum');
+// ->middleware('auth:sanctum');
 
 // statistics 
 Route::get('/statistics', [StatisticsController::class, 'getStatistics']);

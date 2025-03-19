@@ -130,15 +130,18 @@ class AuthController extends Controller
     //update image to add image
    
     public function updateProfile(Request $request) {
-        $user = auth()->user();
         
+        $user = auth()->user();
+        // dd($request);
    
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            // 'password' => 'nullable|string|min:8|max:255',
+            'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif', 
         ]);
+        
+
         
        
         if ($request->has('name')) {
@@ -168,7 +171,7 @@ class AuthController extends Controller
             $user->image = $imagePath;
         }
         
-        
+        $user->fill($request ->except(['image']));
         $user->save();
         
         
