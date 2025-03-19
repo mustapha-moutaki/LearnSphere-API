@@ -137,7 +137,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . $user->id,
-            // 'password' => 'nullable|string|min:8|max:255',
+            'password' => 'nullable|string|min:8|max:255',
             'image' => 'sometimes|image|mimes:jpeg,png,jpg,gif', 
         ]);
         
