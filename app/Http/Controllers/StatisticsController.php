@@ -13,6 +13,7 @@ class StatisticsController extends Controller
 
         $totalCourses = Course::count();
 
+        
         $totalCategories = Category::count();
 
         $totalTags = Tag::count();

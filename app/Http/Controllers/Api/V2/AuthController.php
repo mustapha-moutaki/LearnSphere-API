@@ -181,6 +181,7 @@ class AuthController extends Controller
     }
 
 //shoe all roles 
+
   
 
 }
