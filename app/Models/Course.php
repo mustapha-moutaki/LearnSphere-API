@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Course extends Model
 {
     use HasFactory;
-    protected $fillable =['title', 'category_id', 'description'];
+    
+    protected $fillable =['title', 'category_id', 'description', 'video_url'];
 
     public function category()
     {

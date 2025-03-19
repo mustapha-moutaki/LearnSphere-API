@@ -51,12 +51,14 @@ class CourseController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|unique:courses,name',
+       $course = $request->validate([
+            'title' => 'required|string|unique:courses,title',
             'category_id' => 'required|integer|exists:categories,id',
             'description' => 'nullable|string',
+            'video_url' => 'nullable|url',
         ]);
 
+        // dd($course);
         $course = $this->courseService->createCourse($request->all());
         return response()->json($course, 201);
     }
@@ -112,6 +114,7 @@ class CourseController extends Controller
             'name' => 'sometimes|required|string|unique:courses,name,' . $id,
             'category_id' => 'sometimes|required|integer|exists:categories,id',
             'description' => 'nullable|string',
+            'video_url' => 'nullable|url',
         ]);
 
         $success = $this->courseService->updateCourse($id, $request->all());
