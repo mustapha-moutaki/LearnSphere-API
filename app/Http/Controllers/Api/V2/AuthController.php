@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\api\V2;
 
+// use Storage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\JsonResponse;
+// use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
-    public function login(Request $request): JsonResponse
-    {
+    public function login(Request $request): JsonResponse{
         $request->validate([
             'email' => 'required|email|max:255',
             'password' => 'required|string|min:8|max:255'
@@ -123,4 +125,62 @@ class AuthController extends Controller
             'token_type' => 'Bearer'
         ], 200);
     }
+
+
+
+    //update image to add image
+   
+    public function updateProfile(Request $request) {
+        $user = auth()->user();
+        
+   
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+        ]);
+        
+       
+        if ($request->has('name')) {
+            $user->name = $request->name;
+        }
+        
+       
+        if ($request->has('email')) {
+            $user->email = $request->email;
+        }
+        
+    
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        
+     
+        if ($request->hasFile('image')) {
+           
+            if ($user->image) {
+                Storage::delete('public/' . $user->image);
+            }
+            
+          
+            $imagePath = $request->file('image')->store('images', 'public');
+          
+            $user->image = $imagePath;
+        }
+        
+        
+        $user->save();
+        
+        
+        return response()->json([
+            'message' => 'Profile updated successfully',
+            'user' => $user,
+            'image_url' => $user->image ? Storage::url($user->image) : null,
+        ], 200);
+    }
+
+//shoe all roles 
+  
+
 }
