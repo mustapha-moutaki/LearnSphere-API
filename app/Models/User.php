@@ -6,11 +6,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -45,4 +47,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+
+   
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+ 
+ 
+    public function hasRole($role): bool
+    {
+        return $this->role && $this->role->name === $role;
+    }
+    
+ 
+    
+     public function hasPermission($permission): bool
+     {
+         return $this->roles()->whereHas('permissions', function ($query) use ($permission) {
+             $query->where('name', $permission);
+         })->exists();
+     }
 }
