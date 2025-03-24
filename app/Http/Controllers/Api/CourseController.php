@@ -56,6 +56,8 @@ class CourseController extends Controller
             'category_id' => 'required|integer|exists:categories,id',
             'description' => 'nullable|string',
             'video_url' => 'nullable|url',
+
+            'price' => 'nullable|numeric',
         ]);
 
         // dd($course);
@@ -115,6 +117,8 @@ class CourseController extends Controller
             'category_id' => 'sometimes|required|integer|exists:categories,id',
             'description' => 'nullable|string',
             'video_url' => 'nullable|url',
+
+            'price' => 'nullable|float',
         ]);
 
         $success = $this->courseService->updateCourse($id, $request->all());
