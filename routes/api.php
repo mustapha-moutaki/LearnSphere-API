@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\V2\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\V2\RolesController;
 use App\Http\Controllers\Api\V3\BadgeController;
+
+use App\Http\Controllers\Api\V3\StripeController;
+use App\Http\Controllers\Api\V3\PaymentController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\V2\EnrollmentController;
 use App\Http\Controllers\Api\V3\CourseSearchController;
@@ -69,6 +72,19 @@ Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
     Route::get('/status/{id}', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentStatus']);
 
 });
+
+Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
+    Route::get('/checkout', [StripeController::class, 'checkout']);
+    Route::post('/confirm', [App\Http\Controllers\Api\V3\StripeController::class, 'confirmPayment']);
+    Route::get('/history', [App\Http\Controllers\Api\V3\StripeController::class, 'paymentHistory']);
+    Route::get('/status/{id}', [App\Http\Controllers\Api\V3\StripeController::class, 'paymentStatus']);
+});
+
+Route::get('/payment/success/{enrollment_id}', [SomeController::class, 'paymentSuccess'])
+    ->name('payment.success');
+Route::get('/payment/cancel/{enrollment_id}', [SomeController::class, 'paymentCancel'])
+    ->name('payment.cancel');
+
 
 
 Route::prefix('V3')->group(function () {
