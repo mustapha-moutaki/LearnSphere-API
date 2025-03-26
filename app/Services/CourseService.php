@@ -6,10 +6,10 @@ use App\Models\Course;
 
 class CourseService
 {
-    public function getAllCourses()
-    {
-        return Course::all();
-    }
+    // public function getAllCourses()
+    // {
+    //     return Course::all();
+    // }
 
     public function createCourse(array $data)
     {
@@ -33,5 +33,18 @@ class CourseService
         $course = Course::findOrFail($id);
         $course->delete();
         return true;
+    }
+
+
+
+    public function getAllCourses($categoryId = null)
+    {
+        // If category ID is provided, filter courses by category
+        if ($categoryId) {
+            return Course::where('category_id', $categoryId)->get();
+        }
+        
+        // If no category ID, return all courses
+        return Course::all();
     }
 }

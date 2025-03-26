@@ -29,9 +29,10 @@ class CourseController extends Controller
      *     @OA\Response(response=400, description="Invalid request")
      * )
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return response()->json($this->courseService->getAllCourses());
+        $categoryId = $request->input('category');
+        return response()->json($this->courseService->getAllCourses($categoryId));
     }
 
     /**
@@ -194,7 +195,7 @@ class CourseController extends Controller
     return response()->json([
         'course' => $course,
         'can_access' => true,
-        'content' => $course->content // Assuming you have a relationship or method to fetch course content
+        'content' => $course->content 
     ]);
 }
 }
