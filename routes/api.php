@@ -5,11 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\StatisticsController;
-use App\Http\Controllers\api\V2\AuthController;
+use App\Http\Controllers\Api\V2\AuthController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\api\V2\RolesController;
+use App\Http\Controllers\Api\V2\RolesController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\V2\EnrollmentController;
+use App\Http\Controllers\Api\V3\CourseSearchController;
 // API Routes for categories
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('subcategories', SubcategoryController::class);
@@ -48,6 +49,25 @@ Route::get('/statistics', [StatisticsController::class, 'getStatistics']);
 // show roles
 Route::get('/roles', [RolesController::class, 'index']);
 
+//search for a course by description or title
+Route::prefix('V3')->group(function () {
+    Route::get('/courses/search', [CourseSearchController::class, 'search']);
+});
+//new routes
+// Route::middleware(['auth:sanctum'])->group(function () {
+//     // Existing routes
+//     Route::get('/courses/{id}', [CourseController::class, 'show']);
+    
+//     // New route for course content
+//     Route::get('/courses/{id}/content', [CourseController::class, 'getCourseContent']);
+// });
+Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
+    Route::get('/checkout', [App\Http\Controllers\Api\V3\PaymentController::class, 'checkout']);
+    Route::post('/confirm', [App\Http\Controllers\Api\V3\PaymentController::class, 'confirmPayment']);
+    Route::get('/history', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentHistory']);
+    Route::get('/status/{id}', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentStatus']);
+
+});
 /* 
 
 ---------------------------------------------------------------------
