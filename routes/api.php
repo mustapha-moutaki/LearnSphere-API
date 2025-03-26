@@ -8,6 +8,7 @@ use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\Api\V2\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\V2\RolesController;
+use App\Http\Controllers\Api\V3\BadgeController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\V2\EnrollmentController;
 use App\Http\Controllers\Api\V3\CourseSearchController;
@@ -67,6 +68,23 @@ Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
     Route::get('/history', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentHistory']);
     Route::get('/status/{id}', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentStatus']);
 
+});
+
+
+Route::prefix('V3')->group(function () {
+    // Student badges routes
+    Route::get('/students/{id}/badges', [BadgeController::class, 'studentBadges'])
+        ->middleware(['auth:sanctum']);
+
+    // Get all badges
+    Route::get('/badges', [BadgeController::class, 'index']);
+
+    // Admin badge management routes
+    Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::post('/badges', [BadgeController::class, 'create']);
+        Route::put('/badges/{id}', [BadgeController::class, 'update']);
+        Route::delete('/badges/{id}', [BadgeController::class, 'delete']);
+    });
 });
 /* 
 
