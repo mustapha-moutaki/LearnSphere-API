@@ -1,124 +1,74 @@
 <?php
-namespace App\Http\Controllers\Api\V3;
 
-use App\Models\Course;
+namespace App\Http\Controllers;
+
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
-use App\Services\PayPalPaymentService;
 
 class PaymentController extends Controller
 {
-    protected $paymentService;
-
-    public function __construct(PayPalPaymentService $paymentService)
-    {
-        $this->paymentService = $paymentService;
-    }
-
-    public function checkout(Request $request)
+    public function paymentSuccess($enrollment_id)
     {
         try {
-            // Validate course_id
-            $request->validate([
-                'course_id' => 'required|exists:courses,id'
-            ]);
+            // Find the enrollment
+            $enrollment = Enrollment::findOrFail($enrollment_id);
 
-            // Find the course
-            $course = Course::findOrFail($request->course_id);
+            // Optional: You might want to do additional checks here
+            // For example, verify the payment status with Stripe again
 
-            // Create payment order
-            $paymentDetails = $this->paymentService->createPaymentOrder($course);
-            
-            return response()->json([
-                'order_id' => $paymentDetails['order_id'],
-                'enrollment_id' => $paymentDetails['enrollment_id'],
-                'amount' => $course->price ?? 0
-            ]);
-        } catch (\Exception $e) {
-            // Log the error
-            Log::error('Checkout Error', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            return response()->json([
-                'error' => 'Failed to create payment order',
-                'details' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    public function confirmPayment(Request $request)
-    {
-        try {
-            // Validate incoming request
-            $request->validate([
-                'order_id' => 'required|string',
-                'enrollment_id' => 'required|exists:enrollments,id'
-            ]);
-    
-            // Verify the payment with PayPal
-            $paymentVerified = $this->paymentService->verifyPayment(
-                $request->order_id, 
-                $request->enrollment_id
-            );
-    
-            if ($paymentVerified) {
-                // Update enrollment status
-                $enrollment = Enrollment::findOrFail($request->enrollment_id);
-                $enrollment->status = 'paid';
+            // Update enrollment status if needed
+            if ($enrollment->status == 'pending') {
+                $enrollment->status = 'complete';
                 $enrollment->save();
-    
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Payment confirmed successfully',
-                    'enrollment_id' => $enrollment->id
-                ]);
-            } else {
-                // Payment verification failed
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Payment verification failed'
-                ], 400);
             }
+
+            // Redirect to a success page or return a response
+            return view('payment.success', [
+                'enrollment' => $enrollment,
+                'course' => $enrollment->course
+            ]);
         } catch (\Exception $e) {
             // Log the error
-            Log::error('Payment Confirmation Error', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-    
-            return response()->json([
-                'error' => 'Failed to confirm payment',
-                'details' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    private function verifyPayPalPayment($orderId)
-    {
-        try {
-            // Initialize PayPal provider
-            $provider = new \Srmklive\PayPal\Services\PayPal;
-            
-            // Configure the provider (make sure this matches your .env configuration)
-            $provider->setApiCredentials(config('paypal'));
-            $provider->getAccessToken();
-
-            // Capture the order to verify and complete the payment
-            $order = $provider->capturePaymentOrder($orderId);
-
-            // Check if the order was successfully captured
-            return isset($order['status']) && $order['status'] === 'COMPLETED';
-        } catch (\Exception $e) {
-            Log::error('PayPal Payment Verification Error', [
-                'order_id' => $orderId,
+            Log::error('Payment Success Error', [
+                'enrollment_id' => $enrollment_id,
                 'message' => $e->getMessage()
             ]);
 
-            return false;
+            // Redirect to an error page
+            return view('payment.error', [
+                'message' => 'There was an issue processing your payment.'
+            ]);
+        }
+    }
+
+    public function paymentCancel($enrollment_id)
+    {
+        try {
+            // Find the enrollment
+            $enrollment = Enrollment::findOrFail($enrollment_id);
+
+            // Optional: Update enrollment status
+            if ($enrollment->status == 'pending') {
+                $enrollment->status = 'active';
+                $enrollment->save();
+            }
+
+            // Redirect to a cancel page or return a response
+            return view('payment.cancel', [
+                'enrollment' => $enrollment
+            ]);
+        } catch (\Exception $e) {
+            // Log the error
+            Log::error('Payment Cancel Error', [
+                'enrollment_id' => $enrollment_id,
+                'message' => $e->getMessage()
+            ]);
+
+            // Redirect to an error page
+            return view('payment.error', [
+                'message' => 'There was an issue cancelling your payment.'
+            ]);
         }
     }
 }

@@ -3,15 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\Api\V2\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\V2\RolesController;
-use App\Http\Controllers\Api\V3\BadgeController;
 
+use App\Http\Controllers\Api\V3\BadgeController;
 use App\Http\Controllers\Api\V3\StripeController;
-use App\Http\Controllers\Api\V3\PaymentController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\V2\EnrollmentController;
 use App\Http\Controllers\Api\V3\CourseSearchController;
@@ -57,21 +57,7 @@ Route::get('/roles', [RolesController::class, 'index']);
 Route::prefix('V3')->group(function () {
     Route::get('/courses/search', [CourseSearchController::class, 'search']);
 });
-//new routes
-// Route::middleware(['auth:sanctum'])->group(function () {
-//     // Existing routes
-//     Route::get('/courses/{id}', [CourseController::class, 'show']);
-    
-//     // New route for course content
-//     Route::get('/courses/{id}/content', [CourseController::class, 'getCourseContent']);
-// });
-Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
-    Route::get('/checkout', [App\Http\Controllers\Api\V3\PaymentController::class, 'checkout']);
-    Route::post('/confirm', [App\Http\Controllers\Api\V3\PaymentController::class, 'confirmPayment']);
-    Route::get('/history', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentHistory']);
-    Route::get('/status/{id}', [App\Http\Controllers\Api\V3\PaymentController::class, 'paymentStatus']);
 
-});
 
 Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
     Route::get('/checkout', [StripeController::class, 'checkout']);
@@ -80,10 +66,10 @@ Route::middleware(['auth:sanctum'])->prefix('V3/payments')->group(function () {
     Route::get('/status/{id}', [App\Http\Controllers\Api\V3\StripeController::class, 'paymentStatus']);
 });
 
-Route::get('/payment/success/{enrollment_id}', [SomeController::class, 'paymentSuccess'])
-    ->name('payment.success');
-Route::get('/payment/cancel/{enrollment_id}', [SomeController::class, 'paymentCancel'])
-    ->name('payment.cancel');
+    Route::get('/payment/success/{enrollment_id}', [PaymentController::class, 'paymentSuccess'])
+        ->name('payment.success');
+    Route::get('/payment/cancel/{enrollment_id}', [PaymentController::class, 'paymentCancel'])
+        ->name('payment.cancel');
 
 
 
