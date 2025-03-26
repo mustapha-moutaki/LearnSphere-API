@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use id;
+use App\Models\Enrollment;
 use Illuminate\Http\Request;
+use OpenAPI\Annotations as OA;
 use App\Services\CourseService;
 use Illuminate\Http\JsonResponse;
-use OpenAPI\Annotations as OA;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class CourseController extends Controller
 {
@@ -81,10 +84,30 @@ class CourseController extends Controller
      *     @OA\Response(response=404, description="Course not found")
      * )
      */
-    public function show($id): JsonResponse
-    {
-        return response()->json($this->courseService->getCourseById($id));
+
+     public function show($id): JsonResponse
+{
+    $course = $this->courseService->getCourseById($id);
+    
+    // Optional: Add logic to check if user is enrolled
+    $isEnrolled = false;
+    if (auth()->check()) {
+        $isEnrolled = Enrollment::where([
+            'user_id' => auth()->id(),
+            'course_id' => $id,
+            'status' => 'active'
+        ])->exists();
     }
+
+    return response()->json([
+        'course' => $course,
+        'is_enrolled' => $isEnrolled
+    ]);
+}
+    // public function show($id): JsonResponse
+    // {
+    //     return response()->json($this->courseService->getCourseById($id));
+    // }
 
     /**
      * @OA\Put(
@@ -146,4 +169,32 @@ class CourseController extends Controller
         $success = $this->courseService->deleteCourse($id);
         return response()->json(['success' => $success]);
     }
+
+
+
+
+    public function getCourseContent($id): JsonResponse
+{
+    // Verify enrollment
+    $enrollment = Enrollment::where([
+        'user_id' => auth()->id(),
+        'course_id' => $id,
+        'status' => 'active'
+    ])->first();
+
+    if (!$enrollment) {
+        return response()->json([
+            'message' => 'by course first',
+            'can_access' => false
+        ], 403);
+    }
+
+    $course = $this->courseService->getCourseById($id);
+    
+    return response()->json([
+        'course' => $course,
+        'can_access' => true,
+        'content' => $course->content // Assuming you have a relationship or method to fetch course content
+    ]);
+}
 }
