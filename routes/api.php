@@ -3,15 +3,15 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Api\CourseController;
 use App\Http\Controllers\StatisticsController;
 use App\Http\Controllers\Api\V2\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\V2\RolesController;
-
 use App\Http\Controllers\Api\V3\BadgeController;
+
 use App\Http\Controllers\Api\V3\StripeController;
+use App\Http\Controllers\Api\V3\PaymentController;
 use App\Http\Controllers\Api\SubcategoryController;
 use App\Http\Controllers\Api\V2\EnrollmentController;
 use App\Http\Controllers\Api\V3\CourseSearchController;

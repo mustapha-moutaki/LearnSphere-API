@@ -17,6 +17,23 @@ class StripeController extends Controller
         $this->paymentService = $paymentService;
     }
 
+
+       /**
+    * @OA\Post(
+    *     path="/api/checkout",
+    *     summary="Create Stripe checkout session",
+    *     tags={"Payments"},
+    *     @OA\Parameter(
+    *         name="course_id",
+    *         in="query",
+    *         required=true,
+    *         @OA\Schema(type="integer")
+    *     ),
+    *     @OA\Response(response=200, description="Checkout session created"),
+    *     @OA\Response(response=400, description="Checkout failed")
+    * )
+    */
+
     public function checkout(Request $request)
     {
         try {
@@ -52,6 +69,28 @@ class StripeController extends Controller
             ], 400);
         }
     }
+
+     /**
+    * @OA\Post(
+    *     path="/api/confirm-payment",
+    *     summary="Confirm Stripe payment",
+    *     tags={"Payments"},
+    *     @OA\Parameter(
+    *         name="session_id",
+    *         in="query",
+    *         required=true,
+    *         @OA\Schema(type="string")
+    *     ),
+    *     @OA\Parameter(
+    *         name="enrollment_id",
+    *         in="query",
+    *         required=true,
+    *         @OA\Schema(type="integer")
+    *     ),
+    *     @OA\Response(response=200, description="Payment confirmed"),
+    *     @OA\Response(response=400, description="Payment verification failed")
+    * )
+    */
 
     public function confirmPayment(Request $request)
     {
@@ -95,6 +134,15 @@ class StripeController extends Controller
         }
     }
 
+    /**
+    * @OA\Get(
+    *     path="/api/payment-history",
+    *     summary="Get user payment history",
+    *     tags={"Payments"},
+    *     @OA\Response(response=200, description="Payment history retrieved")
+    * )
+    */
+
     public function paymentHistory()
     {
         // Implement payment history logic
@@ -117,4 +165,20 @@ class StripeController extends Controller
             'course' => $enrollment->course
         ]);
     }
+
+       /**
+    * @OA\Get(
+    *     path="/api/payment-status/{id}",
+    *     summary="Get payment status for specific enrollment",
+    *     tags={"Payments"},
+    *     @OA\Parameter(
+    *         name="id",
+    *         in="path",
+    *         required=true,
+    *         @OA\Schema(type="integer")
+    *     ),
+    *     @OA\Response(response=200, description="Payment status retrieved"),
+    *     @OA\Response(response=404, description="Enrollment not found")
+    * )
+    */
 }

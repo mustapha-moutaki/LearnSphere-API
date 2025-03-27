@@ -1,13 +1,33 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\V3;
 
+use App\Http\Controllers\Controller; 
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
+
+     /**
+     * @OA\Get(
+     *     path="/api/payment/success/{enrollment_id}",
+     *     summary="Process successful payment",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="enrollment_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Payment successful"),
+     *     @OA\Response(response=400, description="Payment processing error")
+     * )
+     */
+
+     
+    
     public function paymentSuccess($enrollment_id)
     {
         try {
@@ -35,26 +55,43 @@ class PaymentController extends Controller
                 'message' => $e->getMessage()
             ]);
 
-            // Redirect to an error page
-            return view('payment.error', [
-                'message' => 'There was an issue processing your payment.'
-            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment processing failed'
+            ], 400);
         }
     }
+
+
+     /**
+     * @OA\Get(
+     *     path="/api/payment/success/{enrollment_id}",
+     *     summary="Process successful payment",
+     *     tags={"Payments"},
+     *     @OA\Parameter(
+     *         name="enrollment_id",
+     *         in="path",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Payment successful"),
+     *     @OA\Response(response=400, description="Payment processing error")
+     * )
+     */
 
     public function paymentCancel($enrollment_id)
     {
         try {
-            // Find the enrollment
+           
             $enrollment = Enrollment::findOrFail($enrollment_id);
 
-            // Optional: Update enrollment status
             if ($enrollment->status == 'pending') {
                 $enrollment->status = 'active';
                 $enrollment->save();
             }
 
-            // Redirect to a cancel page or return a response
+           
             return view('payment.cancel', [
                 'enrollment' => $enrollment
             ]);

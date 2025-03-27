@@ -7,7 +7,6 @@ use App\Models\Badge;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Seeder;
 
 class BadgeController extends Controller
 {
@@ -59,9 +58,6 @@ class BadgeController extends Controller
         }
 
         $updateData = $request->only(['name', 'description']);
-        
-       
-
         $badge->update($updateData);
 
         return response()->json($badge);
@@ -76,5 +72,14 @@ class BadgeController extends Controller
         $badge->delete();
 
         return response()->json(null, 204);
+    }
+
+    /**
+     * Get all badges
+     */
+    public function index()
+    {
+        $badges = Badge::all();
+        return response()->json($badges);
     }
 }
