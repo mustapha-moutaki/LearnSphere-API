@@ -33,6 +33,7 @@ class BadgeService
                 $badgeEarned = true;
             }
             
+            
             if (isset($criteria['unique_courses']) && $uniqueCoursesCount >= $criteria['unique_courses']) {
                 $badgeEarned = true;
             }
